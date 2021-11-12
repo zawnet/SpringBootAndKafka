@@ -37,7 +37,7 @@ public class KafkaConsumer {
     @KafkaListener(topics = "${spring.kafka.consumer.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(String message)
     {
-        System.out.println("message = " + message);
+
         ObjectMapper mapper = new ObjectMapper();
         Message msg = null;
         try {
