@@ -7,6 +7,8 @@ import com.zawnet.population.kafka.model.Message;
 import com.zawnet.population.kafka.producer.KafkaSender;
 import com.zawnet.population.localdata.service.CityService;
 import com.zawnet.population.remotedata.service.PopulationService;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -17,15 +19,12 @@ import java.util.NoSuchElementException;
 
 @Component
 public class KafkaConsumer {
-
     @Value("${spring.kafka.producer.topic}")
     private String producerTOPIC;
 
     CityService cityService;
     PopulationService populationService;
     KafkaSender kafkaSender;
-
-
 
     @Autowired
     public KafkaConsumer(CityService cityService, PopulationService populationService, KafkaSender kafkaSender) {
@@ -37,13 +36,13 @@ public class KafkaConsumer {
     @KafkaListener(topics = "${spring.kafka.consumer.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void consume(String message)
     {
-
         ObjectMapper mapper = new ObjectMapper();
         Message msg = null;
         try {
             msg = mapper.readValue(message, Message.class);
             msg = cityService.getCountryByCity(msg);
-            if(msg.getCountry() != null){
+
+            if(!StringUtils.isEmpty(msg.getCountry())){
                 msg = populationService.getPopulation(msg);
             }
             if(msg.getPopulation() > 0){

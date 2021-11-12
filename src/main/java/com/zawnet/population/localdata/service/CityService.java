@@ -27,10 +27,6 @@ public class CityService {
         if((city = cityRepository.findByCity(msg.getCity())) != null){
             msg.setCountry(city.getCountry());
             msg = populationService.getPopulation(msg);
-            //Send to Kafka
-      //   KafkaProducer sender = new KafkaProducer();
-           //sender.postJsonMessage(msg);
-            //System.out.println(msg);
             return msg;
         }
         else {
